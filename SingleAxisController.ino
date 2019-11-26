@@ -166,9 +166,9 @@ void loop() {
           initPids(); 
 
           /*      ** SET MOTOR SPEEDS **      */ 
-          writeMotor(0, motorPwmOut().one);   //PWM motor 1
+          //writeMotor(0, motorPwmOut().one);   //PWM motor 1
           writeMotor(1, motorPwmOut().two);   //PWM motor 2
-          writeMotor(2, motorPwmOut().three); //PWM motor 3
+          //writeMotor(2, motorPwmOut().three); //PWM motor 3
           writeMotor(3, motorPwmOut().four);  //PWM motor 4
                   
           armState = true; break;
@@ -197,9 +197,9 @@ void loop() {
 
     if(armState == false){
       /*  IF DEVICE DISARMS ——> DISABLE MOTORS */
-      writeMotor(0, 0);
+      // writeMotor(0, 0);
       writeMotor(1, 0);
-      writeMotor(2, 0);
+      // writeMotor(2, 0);
       writeMotor(3, 0);
 
     }
