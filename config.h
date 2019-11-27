@@ -14,18 +14,25 @@
 
 /*  STABILIZATION MODE  */
     #define HORIZON
-//    #define ACRO                      
-
-/* FLIGHT CONTROLLER BOARD CONFIG */
-//  #define AIO_v01   // LEGACY
-//  #define AIO_v03   // LEGACY (purple frame) (no +5V)
-//  #define AIO_v04   // LEGACY (updated to 041)
+//    #define ACRO    
+                  
     #define AIO_v041  // CURRENT REVISION (+5V enabled)
+    
+    #ifdef AIO_v041
+      /*    VERSION 0.4.1    7x20mm Motors   — Black PCB in Red Frame      */
 
-/* DIY FLIGHT CONTROLLER CONFIG (ADDITIONAL SETUP MAY BE REQUIRED) */
-//  #define ATMEGA32u4
-/*  #define ATMEGA328 */ // NOT CONFIGURED
-
+      #define ACCEL_X_OFFSET (933)
+      #define ACCEL_Y_OFFSET (-776)
+      #define ACCEL_Z_OFFSET (1160)
+  
+      #define GYRO_X_OFFSET (108)
+      #define GYRO_Y_OFFSET (13)
+      #define GYRO_Z_OFFSET (-4)
+  
+      #define MPU6050_68
+    
+    #endif
+    
 /* ———————————————————————————————————————————————————REMOTE CONTROL CONFIGURATION—————————————————————————————————————————————————————— */
 
 //  TRANSMITTER GIMBAL/SWITCH OUTPUT VALUES
@@ -65,6 +72,13 @@
 
 /* ———————————————————————————————————————————INERTIAL MEASURMENT UNIT CONFIGURATION—————————————————————————————————————————— */
 
+
+    #define ACC_PART (1.0 - GYRO_PART)
+    #define GYRO_PART 0.985
+
+    #define FILTER_COMPARISONS 15 //number of sample comparisons for median filter
+    
+    
 //  IMU COMMUNICATION SETTINGS
 //   #define I2C_STANDARD     
      #define I2C_FASTMODE
@@ -97,97 +111,8 @@
         #ifdef GYRO_SENSITIVITY_2000
          #define GYRO_SENS 16.4
        #endif     
-    
-    #define ACC_PART (1.0 - GYRO_PART)
-    #define GYRO_PART 0.985
-
-    #define FILTER_COMPARISONS 15 //number of sample comparisons for median filter
 
 
-
-/*    THIS SECTION IS PREDEFINED ACCORDING TO AIO PCB VERSION     */
-//    #define MPU6050_69
-//    #define MPU6050_68
-
-/* //  IMU OFFSET CONFIGURATION
-    #define ACCEL_X_OFFSET (0.0)
-    #define ACCEL_Y_OFFSET (0.0)
-    #define ACCEL_Z_OFFSET (0.0)
-
-    #define GYRO_X_OFFSET (0.0)
-    #define GYRO_Y_OFFSET (0.0)
-    #define GYRO_Z_OFFSET (0.0)
-*/
-
-/* ————————————————————————————————————————AIO PROTOTYPE FLIGHT CONTROLLER CONFIGURATION—————————————————————————————————————————— */
-
-#ifdef AIO_v03
-/*    VERSION 0.3  ***OLD VERSION***   Orange Bottom Mount 3D Printed Frame — v1
-    #define ACCEL_X_OFFSET (1630.0)
-    #define ACCEL_Y_OFFSET (-1359.0)
-    #define ACCEL_Z_OFFSET (869.0)
-
-    #define GYRO_X_OFFSET (16.0)
-    #define GYRO_Y_OFFSET (26.0)
-    #define GYRO_Z_OFFSET (40.0)
-    
-    #define MPU6050_69  
-*/
-
-/*    VERSION 0.3   Purple 3D Printed Frame v2 && 7x20mm Motors   */
-    #define ACCEL_X_OFFSET (2189.0)
-    #define ACCEL_Y_OFFSET (2770.0)
-    #define ACCEL_Z_OFFSET (1100.0)
-
-    #define GYRO_X_OFFSET (97.0)
-    #define GYRO_Y_OFFSET (-56.0)
-    #define GYRO_Z_OFFSET (-64.0)
-    
-    #define MPU6050_68
-
-#endif
-
-#ifdef AIO_v04
-/*    VERSION 0.4    7x16mm Motors  — Bare Red PCB Version            */
-    #define ACCEL_X_OFFSET (-1822.0)
-    #define ACCEL_Y_OFFSET (-2715.0)
-    #define ACCEL_Z_OFFSET (853.0)
-
-    #define GYRO_X_OFFSET (32.0)
-    #define GYRO_Y_OFFSET (-86.0)
-    #define GYRO_Z_OFFSET (-12.0) 
-
-    #define MPU6050_68
-    
-#endif
-
-#ifdef AIO_v041
-    /*    VERSION 0.4.1    7x20mm Motors   — Red Shapeways Frame      
-    #define ACCEL_X_OFFSET (1001)
-    #define ACCEL_Y_OFFSET (316)
-    #define ACCEL_Z_OFFSET (1274)
-
-    #define GYRO_X_OFFSET (42)
-    #define GYRO_Y_OFFSET (10)
-    #define GYRO_Z_OFFSET (25)
-
-    #define MPU6050_68
-
-  */
-  
-  /*    VERSION 0.4.1    7x20mm Motors   — Black PCB in Red Frame      */
-
-    #define ACCEL_X_OFFSET (933)
-    #define ACCEL_Y_OFFSET (-776)
-    #define ACCEL_Z_OFFSET (1160)
-
-    #define GYRO_X_OFFSET (108)
-    #define GYRO_Y_OFFSET (13)
-    #define GYRO_Z_OFFSET (-4)
-
-    #define MPU6050_68
-    
-#endif
 
 /* ———————————————————————————————————————————————CUSTOM VARIABLE STRUCTURE CONFIGURATION————————————————————————————————————————————————— */
 
