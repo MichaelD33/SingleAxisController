@@ -137,6 +137,10 @@ void processAcc(){
 
     roll = atan2(accel_filtered.x, accel_filtered.z) * 180 / M_PI;
     pitch = atan2(accel_filtered.y, accel_filtered.z) * 180 / M_PI;
+    // yaw = (accel_filtered.z)/16384;
+
+    float beta = sqrt(sq(accel_filtered.x) + sq(accel_filtered.y) + sq(accel_filtered.z));
+    yaw = asin(accel_filtered.z / beta) * 180 / M_PI;
 
     //roll = (atan2(accel_filtered.x, sqrt((accel_filtered.y * accel_filtered.y) + (accel_filtered.z * accel_filtered.z))) * 180) / M_PI; 
     //pitch = (atan2(accel_filtered.y, sqrt((accel_filtered.x * accel_filtered.x) + (accel_filtered.z * accel_filtered.z))) * 180) / M_PI; 
@@ -153,7 +157,7 @@ void imuCombine(){
 
      angle.y = GYRO_PART * (angle.y + (gyroRates.x * PID_SAMPLETIME_S)) + (1-GYRO_PART) * pitch; //complementary filter
      angle.x = GYRO_PART * (angle.x + (gyroRates.y * PID_SAMPLETIME_S)) + (1-GYRO_PART) * roll;
-     angle.z = 0;
+     angle.z = yaw;
 
   #else
      currentTime = micros();
@@ -161,17 +165,18 @@ void imuCombine(){
      
      angle.y = GYRO_PART * (angle.y + (gyroRates.x * delta_t)) + (1-GYRO_PART) * pitch; //complementary filter
      angle.x = GYRO_PART * (angle.x + (gyroRates.y * delta_t)) + (1-GYRO_PART) * roll;
-     angle.z = 0;     
+     angle.z = yaw;     
      
      previousTime = currentTime;
   #endif
 
   #ifdef PRINT_SERIALDATA
-    if(chAux2() == 0){
+    if(chAux2() == 2){
      Serial.print(angle.x);
      Serial.print(",");
      Serial.print(angle.y);
      Serial.print(",");
+     Serial.println(angle.z);
     }
   #endif
    

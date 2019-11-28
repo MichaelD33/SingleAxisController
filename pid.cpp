@@ -31,11 +31,12 @@ void computePids(){
     #endif
     
     currentAngle = (sqrt(sq(imu_angles().y) + sq(imu_angles().x)) * atan(imu_angles().y / imu_angles().x)); //read angle from IMU and set it to the current angle
-
+/*
     if(chAux2() == 0){
        Serial.println(currentAngle);
     }
-    
+*/
+   
     // error = (-1 * chRoll())  - currentAngle ;
     error = 0 - currentAngle;
     
