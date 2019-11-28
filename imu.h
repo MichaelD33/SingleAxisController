@@ -13,8 +13,8 @@
   #define MPU_ADDR 0x69
 #endif
 
-axis_int16_t imu_rates();
-axis_float_t imu_angles();
+int imu_rate();
+float imu_angle();
 axis_float_t imu_gyro_angles();
 axis_float_t imu_accel_filtered();
 axis_float_t imu_accelG();

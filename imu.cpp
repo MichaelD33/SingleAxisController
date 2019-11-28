@@ -17,17 +17,10 @@
 #include "imu.h"
 #include "RX.h"
 
-static axis_float_t angle; // angle calculated using accelerometer
-static axis_int16_t gyroRates;
+float angle, accel, TmpRaw;
 
-float roll, pitch, yaw, TmpRaw;
+int gyroRate;
 int AcXRaw,AcYRaw,AcZRaw,GyXRaw,GyYRaw,GyZRaw;
-
-float delta_t;
-unsigned long previousTime = 0;
-unsigned long currentTime = 0;
-
-// extern unsigned long imuEndTime;
 
 median_filter_t accel_x_filter = median_filter_new(FILTER_COMPARISONS,0); //declare median filter for x axis 
 median_filter_t accel_y_filter = median_filter_new(FILTER_COMPARISONS,0); //declare median filter for y axis
@@ -114,9 +107,12 @@ void readIMU(){
 
 void processGyro(){  
   
-  gyroRates.y = (GyYRaw - GYRO_Y_OFFSET) / GYRO_SENS;
-  gyroRates.x = (GyXRaw - GYRO_X_OFFSET) / GYRO_SENS;
-  gyroRates.z = (GyZRaw - GYRO_Z_OFFSET) / GYRO_SENS;
+  (GyYRaw - GYRO_Y_OFFSET) / GYRO_SENS;
+  (GyXRaw - GYRO_X_OFFSET) / GYRO_SENS;
+  (GyZRaw - GYRO_Z_OFFSET) / GYRO_SENS;
+
+  float gamma = sqrt(sq((GyXRaw - GYRO_X_OFFSET) / GYRO_SENS) + sq((GyYRaw - GYRO_Y_OFFSET) / GYRO_SENS) + sq((GyZRaw - GYRO_Z_OFFSET) / GYRO_SENS));
+  gyroRate = asin(((GyZRaw - GYRO_Z_OFFSET) / GYRO_SENS) / gamma);
     
   processAcc();
   imuCombine();
@@ -135,58 +131,36 @@ void processAcc(){
     accel_filtered.y = (median_filter_out(accel_y_filter));
     accel_filtered.z = (median_filter_out(accel_z_filter));
 
-    roll = atan2(accel_filtered.x, accel_filtered.z) * 180 / M_PI;
-    pitch = atan2(accel_filtered.y, accel_filtered.z) * 180 / M_PI;
-    // yaw = (accel_filtered.z)/16384;
+//    roll = atan2(accel_filtered.x, accel_filtered.z) * 180 / M_PI;
+//    pitch = atan2(accel_filtered.y, accel_filtered.z) * 180 / M_PI;
 
     float beta = sqrt(sq(accel_filtered.x) + sq(accel_filtered.y) + sq(accel_filtered.z));
-    yaw = asin(accel_filtered.z / beta) * 180 / M_PI;
-
-    //roll = (atan2(accel_filtered.x, sqrt((accel_filtered.y * accel_filtered.y) + (accel_filtered.z * accel_filtered.z))) * 180) / M_PI; 
-    //pitch = (atan2(accel_filtered.y, sqrt((accel_filtered.x * accel_filtered.x) + (accel_filtered.z * accel_filtered.z))) * 180) / M_PI; 
-
+    accel = 90 - (asin(accel_filtered.z / beta) * 180 / M_PI);
     
-//    roll = (atan2(accel_filtered.x, accel_filtered.z)*180)/M_PI; // -180° --> 180°
-//    pitch = (atan2(accel_filtered.y, accel_filtered.z)*180)/M_PI; // -180° --> 180°
-
 }
 
 void imuCombine(){
 
-  #ifdef LOOP_SAMPLING
-
-     angle.y = GYRO_PART * (angle.y + (gyroRates.x * PID_SAMPLETIME_S)) + (1-GYRO_PART) * pitch; //complementary filter
-     angle.x = GYRO_PART * (angle.x + (gyroRates.y * PID_SAMPLETIME_S)) + (1-GYRO_PART) * roll;
-     angle.z = yaw;
-
-  #else
-     currentTime = micros();
-     delta_t = (currentTime - previousTime) / 1000000;
-     
-     angle.y = GYRO_PART * (angle.y + (gyroRates.x * delta_t)) + (1-GYRO_PART) * pitch; //complementary filter
-     angle.x = GYRO_PART * (angle.x + (gyroRates.y * delta_t)) + (1-GYRO_PART) * roll;
-     angle.z = yaw;     
-     
-     previousTime = currentTime;
-  #endif
+   angle = GYRO_PART * (angle + (gyroRate * IMU_SAMPLETIME)) + (1-GYRO_PART) * accel;     
+   
 
   #ifdef PRINT_SERIALDATA
     if(chAux2() == 2){
-     Serial.print(angle.x);
+     Serial.print(angle);
      Serial.print(",");
-     Serial.print(angle.y);
+     Serial.print(accel);
      Serial.print(",");
-     Serial.println(angle.z);
+     Serial.println(gyroRate);
     }
   #endif
    
 }
 
 
-axis_int16_t imu_rates() {
-  return gyroRates;
+int imu_rate() {
+  return gyroRate;
 }
 
-axis_float_t imu_angles() {
+float imu_angle() {
   return angle;
 }
