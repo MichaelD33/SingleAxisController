@@ -30,12 +30,7 @@ void computePids(){
       currentT = micros();
     #endif
     
-    currentAngle = (sqrt(sq(imu_angles().y) + sq(imu_angles().x)) * atan(imu_angles().y / imu_angles().x)); //read angle from IMU and set it to the current angle
-/*
-    if(chAux2() == 0){
-       Serial.println(currentAngle);
-    }
-*/
+    currentAngle = imu_angle(); //read angle from IMU and set it to the current angle
    
     // error = (-1 * chRoll())  - currentAngle ;
     error = 0 - currentAngle;
