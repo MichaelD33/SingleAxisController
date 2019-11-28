@@ -13,25 +13,19 @@
 /* —————————————————————————————————————————————————AIRCRAFT CONFIGURATION——————————————————————————————————————————————————— */
 
 /*  STABILIZATION MODE  */
-    #define HORIZON
-//    #define ACRO    
                   
-    #define AIO_v041  // CURRENT REVISION (+5V enabled)
-    
-    #ifdef AIO_v041
-      /*    VERSION 0.4.1    7x20mm Motors   — Black PCB in Red Frame      */
+    /*    VERSION 0.4.1    7x20mm Motors   — Black PCB in Red Frame      */
 
-      #define ACCEL_X_OFFSET (933)
-      #define ACCEL_Y_OFFSET (-776)
-      #define ACCEL_Z_OFFSET (1160)
-  
-      #define GYRO_X_OFFSET (108)
-      #define GYRO_Y_OFFSET (13)
-      #define GYRO_Z_OFFSET (-4)
-  
-      #define MPU6050_68
+    #define ACCEL_X_OFFSET (933)
+    #define ACCEL_Y_OFFSET (-776)
+    #define ACCEL_Z_OFFSET (1160)
+
+    #define GYRO_X_OFFSET (108)
+    #define GYRO_Y_OFFSET (13)
+    #define GYRO_Z_OFFSET (-4)
+
+    #define MPU6050_68
     
-    #endif
     
 /* ———————————————————————————————————————————————————REMOTE CONTROL CONFIGURATION—————————————————————————————————————————————————————— */
 

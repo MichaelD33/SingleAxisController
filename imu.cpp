@@ -29,11 +29,10 @@ unsigned long currentTime = 0;
 
 // extern unsigned long imuEndTime;
 
-#ifdef HORIZON
-   median_filter_t accel_x_filter = median_filter_new(FILTER_COMPARISONS,0); //declare median filter for x axis 
-   median_filter_t accel_y_filter = median_filter_new(FILTER_COMPARISONS,0); //declare median filter for y axis
-   median_filter_t accel_z_filter = median_filter_new(FILTER_COMPARISONS,0); //declare median filter for z axis
-#endif
+median_filter_t accel_x_filter = median_filter_new(FILTER_COMPARISONS,0); //declare median filter for x axis 
+median_filter_t accel_y_filter = median_filter_new(FILTER_COMPARISONS,0); //declare median filter for y axis
+median_filter_t accel_z_filter = median_filter_new(FILTER_COMPARISONS,0); //declare median filter for z axis
+
 
  void initIMU(){ 
    
@@ -119,16 +118,13 @@ void processGyro(){
   gyroRates.x = (GyXRaw - GYRO_X_OFFSET) / GYRO_SENS;
   gyroRates.z = (GyZRaw - GYRO_Z_OFFSET) / GYRO_SENS;
     
-  #ifdef HORIZON
-    processAcc();
-    imuCombine();
-  #endif
+  processAcc();
+  imuCombine();
 
 }
 
 void processAcc(){
     //filtering accelerometer noise using a median filter
-#ifdef HORIZON
     axis_float_t accel_filtered; // filtered accelerometer raw values
    
     median_filter_in(accel_x_filter, AcXRaw);
@@ -139,14 +135,16 @@ void processAcc(){
     accel_filtered.y = (median_filter_out(accel_y_filter));
     accel_filtered.z = (median_filter_out(accel_z_filter));
 
-    roll = (atan2(accel_filtered.x, sqrt((accel_filtered.y * accel_filtered.y) + (accel_filtered.z * accel_filtered.z))) * 180) / M_PI; 
-    pitch = (atan2(accel_filtered.y, sqrt((accel_filtered.x * accel_filtered.x) + (accel_filtered.z * accel_filtered.z))) * 180) / M_PI; 
+    roll = atan2(accel_filtered.x, accel_filtered.z) * 180 / M_PI;
+    pitch = atan2(accel_filtered.y, accel_filtered.z) * 180 / M_PI;
+
+    //roll = (atan2(accel_filtered.x, sqrt((accel_filtered.y * accel_filtered.y) + (accel_filtered.z * accel_filtered.z))) * 180) / M_PI; 
+    //pitch = (atan2(accel_filtered.y, sqrt((accel_filtered.x * accel_filtered.x) + (accel_filtered.z * accel_filtered.z))) * 180) / M_PI; 
 
     
 //    roll = (atan2(accel_filtered.x, accel_filtered.z)*180)/M_PI; // -180° --> 180°
 //    pitch = (atan2(accel_filtered.y, accel_filtered.z)*180)/M_PI; // -180° --> 180°
 
-#endif
 }
 
 void imuCombine(){
@@ -169,11 +167,12 @@ void imuCombine(){
   #endif
 
   #ifdef PRINT_SERIALDATA
-     //Serial.print("X-Angle: ");
+    if(chAux2() == 0){
      Serial.print(angle.x);
      Serial.print(",");
      Serial.print(angle.y);
      Serial.print(",");
+    }
   #endif
    
 }

@@ -30,15 +30,11 @@ void computePids(){
       currentT = micros();
     #endif
     
-    #ifdef HORIZON
-      currentAngle = (sqrt(imu_angles().y*imu_angles().y + imu_angles().x*imu_angles().x) * tan(imu_angles().y / imu_angles().x)); //read angle from IMU and set it to the current angle
-    #endif
+    currentAngle = (sqrt(sq(imu_angles().y) + sq(imu_angles().x)) * atan(imu_angles().y / imu_angles().x)); //read angle from IMU and set it to the current angle
 
-    #ifdef ACRO
-      currentAngle = (sqrt(imu_rates().y*imu_rates().y + imu_rates().x*imu_rates().x) * tan(imu_rates().y / imu_rates().x)); //read gyro rates from IMU and set it to the current angle
-    #endif
-
-    Serial.print(currentAngle);
+    if(chAux2() == 0){
+       Serial.println(currentAngle);
+    }
     
     // error = (-1 * chRoll())  - currentAngle ;
     error = 0 - currentAngle;
@@ -56,8 +52,6 @@ void computePids(){
     //compute integral
     float integral = Ki * errorSum;
 
-
-    
     //clamp the range of integral values
     if(integral > MAX_INTEGRAL){ 
       integral = MAX_INTEGRAL; 
@@ -66,22 +60,6 @@ void computePids(){
     }
 
     output = (Kp * error + integral - Kd * deltaError);
-
-/*
-    #ifdef PRINT_SERIALDATA
-      if(chAux2() == 0){
-        Serial.print(",");
-        Serial.print(output);
-      }
-    #endif
-
-
-    //removed integral clamping
-    outputX = (Kp * error + Ki * errorSum - Kd * deltaError);
-
-    //compute PID output as a function of the throttle
-    outputX = (Kp * error + integral - Kd * deltaError) * (chThrottle() / (ESC_MAX * ESC_TOLERANCE));
-*/
  
   
     //write outputs to corresponding motors at the corresponding speed

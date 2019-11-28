@@ -44,30 +44,8 @@ bool lastArmState = false;
   long lastStart = 0;
 #endif
 
-#ifdef AIO_v01 //prototype v0.1 configuration - LEGACY
-  byte motorOutput[] = {9, 5, 10, 6};  
-  #define ATMEGA32u4
-#endif
-
-#ifdef AIO_v03  //version 0.3 configuration - LEGACY (purple frame)
-  byte motorOutput[] = {5, 9, 6, 10};  
-//  byte motorOutput[] = {6, 10, 5, 9};   
-  #define ATMEGA32u4
-#endif
-
-#ifdef AIO_v04 //version 0.4 configuration - LEGACY
-  byte motorOutput[] = {10, 9, 13, 6}; 
-  #define ATMEGA32u4
-#endif
-
-#ifdef AIO_v041 //version 0.4.1 configuration - Black PCB
-  byte motorOutput[] = {10, 9, 5, 6};  
-  #define ATMEGA32u4
-#endif
-
-
-/*  IF NOT USING THE AIO PCB, USE THE FORMAT SHOWN BELOW —— (MOTOR LOCATION REF. DIAGRAM ON GITHUB) */
-//  byte motorOutput[] = {[motor 1], [motor 2], [motor 3], [motor 4]}; 
+//version 0.4.1 configuration - Black PCB
+byte motorOutput[] = {10, 9, 5, 6};  
 
 void setup() {
 
@@ -75,12 +53,10 @@ void setup() {
     Serial.begin(115200);
   #endif
   
-  #ifdef ATMEGA32u4
-    DDRB = DDRB | B11110000; //sets pins D8, D9, D10, D11 as outputs
-    DDRC = DDRC | B11000000; //sets pin D5 as output
-    DDRD = DDRD | B10000000; //sets pin D6 as output
-    DDRE = DDRE | B01000000; //sets pin D7 as output
-  #endif
+  DDRB = DDRB | B11110000; //sets pins D8, D9, D10, D11 as outputs
+  DDRC = DDRC | B11000000; //sets pin D5 as output
+  DDRD = DDRD | B10000000; //sets pin D6 as output
+  DDRE = DDRE | B01000000; //sets pin D7 as output
 
   delay(2000); //give time for RX to connect to remote
   initSbus();  //connect to the remote reciever (rx.cpp)
@@ -96,7 +72,6 @@ void setup() {
 void loop() {
 
   #ifdef LOOP_SAMPLING
-
     /*     ** LOOP TIMING **      */         
     while((micros() - lastStart) < LOOP_SAMPLETIME){
       indexTime = micros();
@@ -137,62 +112,34 @@ void loop() {
    /*     ** RX DATA COLLECTION **       */
    readRx();  //read the remote and convert data to a rotational rate of ±180°/s (rx.cpp)
 
-   /*     ** PROGRAM START CONTINGENCY **       */
-   if(failsafeState() == 0){
-      switch(chAux1()){
-        case 0: //if the arm switch is set to 0, do not enable the quadcopter
-          armState = false; break;
 
-        case 1: //if the arm  switch is set to 1, start the PID calculation
-
-          /*      ** PID TIMING **      */ 
-          #ifdef LOOP_SAMPLING            
-            while((micros() - pidEndTime) < PID_SAMPLETIME){
-              indexTime = micros();
-            }
-
-            #ifdef PRINT_SERIALDATA
-              if(chAux2() == 1){
-                Serial.print(",\t PID: ");
-                Serial.println(indexTime - pidEndTime);
-              }
-            #endif
-            
-            pidEndTime = indexTime;
-            
-          #endif
-
-          /*      ** PROCESS INPUT DATA **      */ 
-          initPids(); 
-
-          /*      ** SET MOTOR SPEEDS **      */ 
-          //writeMotor(0, motorPwmOut().one);   //PWM motor 1
-          writeMotor(1, motorPwmOut().two);   //PWM motor 2
-          //writeMotor(2, motorPwmOut().three); //PWM motor 3
-          writeMotor(3, motorPwmOut().four);  //PWM motor 4
-                  
-          armState = true; break;
-        
-        case 2:
-          armState = false; break;
-    
-        default:
-          armState = false; break; 
+    /*      ** PID TIMING **      */ 
+    #ifdef LOOP_SAMPLING            
+      while((micros() - pidEndTime) < PID_SAMPLETIME){
+        indexTime = micros();
       }
-    
-    }else if(failsafeState() != 0){
-    
-    //turn motors off if failsafe is triggered
-    Serial.print(failsafeState());
-    armState = false;
-    
-    }else{
-    
-    //turn motors off if something else happens
-    Serial.print(failsafeState());
-    armState = false;
-    
-    }
+
+      #ifdef PRINT_SERIALDATA
+        if(chAux2() == 1){
+          Serial.print(",\t PID: ");
+          Serial.println(indexTime - pidEndTime);
+        }
+      #endif
+      
+      pidEndTime = indexTime;
+      
+    #endif
+
+    /*      ** PROCESS INPUT DATA **      */ 
+    initPids(); 
+
+    /*      ** SET MOTOR SPEEDS **      */ 
+    //writeMotor(0, motorPwmOut().one);   //PWM motor 1
+    writeMotor(1, motorPwmOut().two);   //PWM motor 2
+    //writeMotor(2, motorPwmOut().three); //PWM motor 3
+    writeMotor(3, motorPwmOut().four);  //PWM motor 4
+            
+    armState = true;
 
 
     if(armState == false){
