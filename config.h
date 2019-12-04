@@ -16,13 +16,13 @@
                   
     /*    VERSION 0.4.1    7x20mm Motors   — Black PCB in Red Frame      */
 
-    #define ACCEL_X_OFFSET (933)
-    #define ACCEL_Y_OFFSET (-776)
-    #define ACCEL_Z_OFFSET (1160)
+    #define ACCEL_X_OFFSET (948)
+    #define ACCEL_Y_OFFSET (-692)
+    #define ACCEL_Z_OFFSET (1120)
 
-    #define GYRO_X_OFFSET (108)
-    #define GYRO_Y_OFFSET (13)
-    #define GYRO_Z_OFFSET (-4)
+    #define GYRO_X_OFFSET (-25)
+    #define GYRO_Y_OFFSET (-230)
+    #define GYRO_Z_OFFSET (48)
 
     #define MPU6050_68
     
@@ -67,10 +67,9 @@
 /* ———————————————————————————————————————————INERTIAL MEASURMENT UNIT CONFIGURATION—————————————————————————————————————————— */
 
 
-    #define ACC_PART (1.0 - GYRO_PART)
     #define GYRO_PART 0.985
 
-    #define FILTER_COMPARISONS 15 //number of sample comparisons for median filter
+    #define FILTER_COMPARISONS 9 //number of sample comparisons for median filter
     
     
 //  IMU COMMUNICATION SETTINGS
@@ -93,7 +92,7 @@
         
       #define GYRO_SENSITIVITY_500
         #ifdef GYRO_SENSITIVITY_500
-          #define GYRO_SENS 65.6
+          #define GYRO_SENS 65.5
         #endif
         
 //      #define GYRO_SENSITIVITY_1000

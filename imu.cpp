@@ -17,14 +17,19 @@
 #include "imu.h"
 #include "RX.h"
 
-float angle, accel, TmpRaw;
-
-int gyroRate;
+float angle = 0;
+float accel, TmpRaw, gyroRate, gamma;
 int AcXRaw,AcYRaw,AcZRaw,GyXRaw,GyYRaw,GyZRaw;
+
+axis_float_t gyroOutput;
 
 median_filter_t accel_x_filter = median_filter_new(FILTER_COMPARISONS,0); //declare median filter for x axis 
 median_filter_t accel_y_filter = median_filter_new(FILTER_COMPARISONS,0); //declare median filter for y axis
 median_filter_t accel_z_filter = median_filter_new(FILTER_COMPARISONS,0); //declare median filter for z axis
+
+median_filter_t gyro_x_filter = median_filter_new(FILTER_COMPARISONS,0); //declare median filter for x axis 
+median_filter_t gyro_y_filter = median_filter_new(FILTER_COMPARISONS,0); //declare median filter for y axis
+median_filter_t gyro_z_filter = median_filter_new(FILTER_COMPARISONS,0); //declare median filter for z axis
 
 
  void initIMU(){ 
@@ -106,14 +111,25 @@ void readIMU(){
 }
 
 void processGyro(){  
-  
-  (GyYRaw - GYRO_Y_OFFSET) / GYRO_SENS;
-  (GyXRaw - GYRO_X_OFFSET) / GYRO_SENS;
-  (GyZRaw - GYRO_Z_OFFSET) / GYRO_SENS;
 
-  float gamma = sqrt(sq((GyXRaw - GYRO_X_OFFSET) / GYRO_SENS) + sq((GyYRaw - GYRO_Y_OFFSET) / GYRO_SENS) + sq((GyZRaw - GYRO_Z_OFFSET) / GYRO_SENS));
-  gyroRate = asin(((GyZRaw - GYRO_Z_OFFSET) / GYRO_SENS) / gamma);
-    
+  axis_float_t gyroFiltered;
+
+  median_filter_in(gyro_x_filter, GyXRaw);
+  median_filter_in(gyro_y_filter, GyYRaw);
+  median_filter_in(gyro_z_filter, GyZRaw);
+
+  gyroFiltered.x = median_filter_out(gyro_x_filter);
+  gyroFiltered.y = median_filter_out(gyro_y_filter);
+  gyroFiltered.z = median_filter_out(gyro_z_filter);
+
+  gyroOutput.x = ((gyroFiltered.x - GYRO_X_OFFSET) / GYRO_SENS);
+  gyroOutput.y = ((gyroFiltered.y - GYRO_Y_OFFSET) / GYRO_SENS);
+  gyroOutput.z = ((gyroFiltered.z - GYRO_Z_OFFSET) / GYRO_SENS);
+
+  //gamma = sqrt(sq(gyroOutput.x) + sq(gyroOutput.y) + sq(gyroOutput.z));
+
+  gyroRate = (  gyroOutput.x / sqrt(2) + gyroOutput.y / sqrt(2) );
+  
   processAcc();
   imuCombine();
 
@@ -134,15 +150,16 @@ void processAcc(){
 //    roll = atan2(accel_filtered.x, accel_filtered.z) * 180 / M_PI;
 //    pitch = atan2(accel_filtered.y, accel_filtered.z) * 180 / M_PI;
 
-    float beta = sqrt(sq(accel_filtered.x) + sq(accel_filtered.y) + sq(accel_filtered.z));
-    accel = 90 - (asin(accel_filtered.z / beta) * 180 / M_PI);
-    
+//    float beta = sqrt(sq(accel_filtered.x) + sq(accel_filtered.y) + sq(accel_filtered.z));
+//    accel = (acos(accel_filtered.z / beta) * 180 / M_PI);
+     
+     float beta = (  accel_filtered.x / sqrt(2) + accel_filtered.y / sqrt(2) );
+     accel = atan2(beta, accel_filtered.z) * 180 / M_PI;
 }
 
 void imuCombine(){
 
-   angle = GYRO_PART * (angle + (gyroRate * IMU_SAMPLETIME)) + (1-GYRO_PART) * accel;     
-   
+  angle = 0.965 * (angle + (gyroRate * 0.003)) + 0.035 * accel;
 
   #ifdef PRINT_SERIALDATA
     if(chAux2() == 2){
@@ -151,6 +168,11 @@ void imuCombine(){
      Serial.print(accel);
      Serial.print(",");
      Serial.println(gyroRate);
+//     Serial.print(gyroOutput.x);
+//     Serial.print(",");
+//     Serial.print(gyroOutput.y);
+//     Serial.print(",");
+//     Serial.println(gyroOutput.z);
     }
   #endif
    

@@ -15,12 +15,6 @@
 
 int imu_rate();
 float imu_angle();
-axis_float_t imu_gyro_angles();
-axis_float_t imu_accel_filtered();
-axis_float_t imu_accelG();
-float accel_roll();
-float accel_pitch();
-float benchmark();
 void initIMU();
 void readIMU();
 void processGyro();
