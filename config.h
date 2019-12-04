@@ -123,6 +123,10 @@ typedef struct {
 
 typedef struct {
   uint8_t one, two, three, four;
+} byte_pwmOut;
+
+typedef struct {
+  int16_t one, two, three, four;
 } int_pwmOut;
 
 void writeMotor(int, float);

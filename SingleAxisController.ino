@@ -61,6 +61,9 @@ void setup() {
   delay(2000); //give time for RX to connect to remote
   initSbus();  //connect to the remote reciever (rx.cpp)
   initIMU();   //activate the imu and set gyroscope and accelerometer sensitivity (imu.cpp)
+  
+  readRx();
+  readIMU();
 
   indexTime = micros();
   imuEndTime = micros();
@@ -105,14 +108,7 @@ void loop() {
       
   #endif
 
-   /*     ** IMU DATA COLLECTION **       */
-   readIMU(); //read the imu and calculate the quadcopters position relative to gravity (imu.cpp)
-              // IMU supports up to 8kHz gyro update rate and 1kHz acc update rate --- when DLPF is activated this is diminished significantly (see MPU6050 register mapping datasheet)
-  
-   /*     ** RX DATA COLLECTION **       */
-   readRx();  //read the remote and convert data to a rotational rate of ±180°/s (rx.cpp)
-
-
+  if(chAux1() == 1){
     /*      ** PID TIMING **      */ 
     #ifdef LOOP_SAMPLING            
       while((micros() - pidEndTime) < PID_SAMPLETIME){
@@ -122,7 +118,7 @@ void loop() {
       #ifdef PRINT_SERIALDATA
         if(chAux2() == 1){
           Serial.print(",\t PID: ");
-          Serial.println(indexTime - pidEndTime);
+          Serial.print(indexTime - pidEndTime);
         }
       #endif
       
@@ -141,25 +137,32 @@ void loop() {
             
     armState = true;
 
-
-    if(armState == false){
+  }else{
       /*  IF DEVICE DISARMS ——> DISABLE MOTORS */
       // writeMotor(0, 0);
       writeMotor(1, 0);
       // writeMotor(2, 0);
       writeMotor(3, 0);
 
-    }
-    
-    lastArmState = armState;
+  }
 
+    
+
+   /*     ** IMU DATA COLLECTION **       */
+  readIMU(); //read the imu and calculate the quadcopters position relative to gravity (imu.cpp)
+              // IMU supports up to 8kHz gyro update rate and 1kHz acc update rate --- when DLPF is activated this is diminished significantly (see MPU6050 register mapping datasheet)
   
-    #ifdef PRINT_SERIALDATA
-      printSerial(); // used for GUI application and debugging
-      if(chAux2() != 0){
-        Serial.println("");
-      }
-    #endif
+   /*     ** RX DATA COLLECTION **       */
+  readRx();  //read the remote and convert data to a rotational rate of ±180°/s (rx.cpp)
+
+
+
+  lastArmState = armState;
+  
+  #ifdef PRINT_SERIALDATA
+    printSerial(); // used for GUI application and debugging
+    Serial.println("");
+  #endif
 
 }
 

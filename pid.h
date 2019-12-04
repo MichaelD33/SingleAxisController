@@ -7,12 +7,12 @@
 #include "config.h"
 
 /*  DEFINE PROPORTIONAL CONSTANTS */
-#define Kp 0.0
+#define Kp 1
 
-#ifndef LOOP_SAMPLING
+#ifdef LOOP_SAMPLING
 
-  #define Ki 0.000000
-  #define Kd 0  //10
+  #define Ki 0.000000 * PID_SAMPLETIME
+  #define Kd 0 * PID_SAMPLETIME
 
 #else
 
@@ -23,7 +23,7 @@
 #endif
 
 
-int_pwmOut motorPwmOut();
+byte_pwmOut motorPwmOut();
 
 void initPids();
 void resetPids();

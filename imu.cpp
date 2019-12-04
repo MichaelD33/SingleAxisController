@@ -167,12 +167,7 @@ void imuCombine(){
      Serial.print(",");
      Serial.print(accel);
      Serial.print(",");
-     Serial.println(gyroRate);
-//     Serial.print(gyroOutput.x);
-//     Serial.print(",");
-//     Serial.print(gyroOutput.y);
-//     Serial.print(",");
-//     Serial.println(gyroOutput.z);
+     Serial.print(gyroRate);
     }
   #endif
    
