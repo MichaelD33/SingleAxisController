@@ -85,6 +85,8 @@ void loop() {
 
     #ifdef PRINT_SERIALDATA
       if(chAux2() == 1){
+        Serial.print(chAux1());
+        Serial.print(",");
         Serial.print("Last Loop Duration: ");
         Serial.print(lastSample);  
       }

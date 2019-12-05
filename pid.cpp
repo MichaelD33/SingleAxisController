@@ -7,9 +7,13 @@
 
 unsigned long lastTime, currentT;
 
+float Kp = 0;
+float Ki = 0;
+float Kd = 0;
+
 int desiredAngle;
 float currentAngle, lastAngle;
-float error, deltaError, errorSum;
+float error, deltaError, errorSum, integral;
 float output;
 
 byte_pwmOut motorSpeed;
@@ -22,33 +26,27 @@ void initPids(){
     resetPids();
     lastAngle = currentAngle;
     lastTime = currentT;
+
+    Kp = (1 + chAuxPot1() + chAuxPot2());
+    Ki = 0 * PID_SAMPLETIME;
+    Kd = 0 / PID_SAMPLETIME;
 } 
     
 
 void computePids(){
-
-    #ifndef LOOP_SAMPLING
-      currentT = micros();
-    #endif
     
     currentAngle = imu_angle(); //read angle from IMU and set it to the current angle
    
     // error = (-1 * chRoll())  - currentAngle ;
     error = 0 - currentAngle;
     
-    #ifndef LOOP_SAMPLING
-      long timeChange = (currentT - lastTime);
-      
-      errorSum += error * timeChange;
-      deltaError = (currentAngle - lastAngle) / timeChange;       
-    #else
-      errorSum += error;
-      deltaError = (currentAngle - lastAngle);
-    #endif
+//      errorSum += error;
+    deltaError = (currentAngle - lastAngle);
     
     //compute integral
-    float integral = Ki * errorSum;
-
+//    float integral = Ki * errorSum;
+    integral += Ki * error;
+    
     //clamp the range of integral values
     if(integral > MAX_INTEGRAL){ 
       integral = MAX_INTEGRAL; 
@@ -95,7 +93,15 @@ void computePids(){
     motorSpeed.four = motorSpeed_raw.four;
 
     if(chAux2() == 0){
-      Serial.print(error);
+      Serial.print(chAux1());
+      Serial.print(",");
+      Serial.print(chAuxPot1());
+      Serial.print(",");
+      Serial.print(chAuxPot2(), 3);
+      Serial.print(",");
+      Serial.print(Kp);
+      Serial.print(",");
+      Serial.print(output);
       Serial.print(",");
       Serial.print(motorSpeed.two);
       Serial.print(",");

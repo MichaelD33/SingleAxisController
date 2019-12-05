@@ -163,10 +163,17 @@ void imuCombine(){
 
   #ifdef PRINT_SERIALDATA
     if(chAux2() == 2){
+     Serial.print("Arming: ");
+     Serial.print(chAux1());
+     Serial.print(", pot 1: ");
+     Serial.print(chAuxPot1());
+     Serial.print(", pot 2: ");
+     Serial.print(chAuxPot2(), 3);
+     Serial.print(", angle: ");
      Serial.print(angle);
-     Serial.print(",");
+     Serial.print(", acc: ");
      Serial.print(accel);
-     Serial.print(",");
+     Serial.print(", gyro: ");
      Serial.print(gyroRate);
     }
   #endif
