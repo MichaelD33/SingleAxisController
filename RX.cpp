@@ -3,7 +3,8 @@
 #include "SBUS.h"
 #include "RX.h"
 
-int throttleRx, rollRx, pitchRx, yawRx, swA, swB, swC, swD, failsafe;
+int throttleRx, rollRx, pitchRx, yawRx, swA, swB, failsafe;
+float swC, swD;
 
 // y = ((varRate*x)^3)/180^varRate
 
@@ -29,6 +30,7 @@ void readRx(){
       swB = sBus.channels[5];
       swC = sBus.channels[6];
       swD = sBus.channels[7];
+
       
       failsafe = sBus.failsafe_status;
 
@@ -42,9 +44,11 @@ void readRx(){
 //    map switches to appropriate values
       swA = map(swA, MINTHROTTLE, MAXTHROTTLE, 0, 2);
       swB = map(swB, MINTHROTTLE, MAXTHROTTLE, 0, 2);
-      // swC = map(swC, MINTHROTTLE, MAXTHROTTLE, 0, 2);
-      // swD = map(swD, MINTHROTTLE, MAXTHROTTLE, 0, 2);
-      
+      swC = map(swC, MINTHROTTLE, MAXTHROTTLE, 0, 1000);
+      swD = map(swD, MINTHROTTLE, MAXTHROTTLE, 0, 1000);
+
+      swC = swC / 1000;
+      swD = swD / 5000;
 
     }
     
@@ -73,6 +77,16 @@ int chAux1() {
 int chAux2() {
   return swB;
 }
+
+float chAuxPot1(){
+ return swC; 
+}
+
+float chAuxPot2(){
+ return swD; 
+}
+
+
 int failsafeState(){
   return failsafe;
 }
