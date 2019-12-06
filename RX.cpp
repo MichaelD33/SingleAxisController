@@ -30,6 +30,8 @@ void readRx(){
       swB = sBus.channels[5];
       swC = sBus.channels[6];
       swD = sBus.channels[7];
+      swE = sBus.channels[8];
+      swF = sBus.channels[9];
 
       
       failsafe = sBus.failsafe_status;
@@ -49,6 +51,9 @@ void readRx(){
 
       swC = swC / 1000;
       swD = swD / 5000;
+
+      swE = map(swE, MINTHROTTLE, MAXTHROTTLE, 0, 1);
+      swF = map(swF, MINTHROTTLE, MAXTHROTTLE, 0, 1);
 
     }
     
@@ -84,6 +89,14 @@ float chAuxPot1(){
 
 float chAuxPot2(){
  return swD; 
+}
+
+int chAux3(){
+  return swE;
+}
+
+int chAux4(){
+  return swF;
 }
 
 

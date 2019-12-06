@@ -91,9 +91,11 @@ void SBUS::UpdateChannels(){
   channels[5]  = ((sbusData[7]>>7|sbusData[8]<<1|sbusData[9]<<9) & 0x07FF);
   channels[6]  = ((sbusData[9]>>2|sbusData[10]<<6) & 0x07FF);
   channels[7]  = ((sbusData[10]>>5|sbusData[11]<<3) & 0x07FF); // & the other 8 + 2 channels if you need them
-  #ifdef ALL_CHANNELS
+  
   channels[8]  = ((sbusData[12]|sbusData[13]<< 8) & 0x07FF);
   channels[9]  = ((sbusData[13]>>3|sbusData[14]<<5) & 0x07FF);
+  
+  #ifdef ALL_CHANNELS
   channels[10] = ((sbusData[14]>>6|sbusData[15]<<2|sbusData[16]<<10) & 0x07FF);
   channels[11] = ((sbusData[16]>>1|sbusData[17]<<7) & 0x07FF);
   channels[12] = ((sbusData[17]>>4|sbusData[18]<<4) & 0x07FF);
@@ -150,5 +152,3 @@ void SBUS::FeedLine(void){
     }
   }
 }
-
-
