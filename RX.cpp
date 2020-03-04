@@ -4,7 +4,7 @@
 #include "RX.h"
 
 int throttleRx, rollRx, pitchRx, yawRx, swA, swB, failsafe;
-float swC, swD;
+float swC, swD, swE, swF;
 
 // y = ((varRate*x)^3)/180^varRate
 
