@@ -46,10 +46,8 @@
 /* ———————————————————————————————————————————————PID CONTROLLER CONFIGURATION———————————————————————————————————————————————— */
 
     #ifdef LOOP_SAMPLING
-      #define LOOP_SAMPLETIME 3000 //define loop sample time at a frequency of 3000µs
-      #define PID_SAMPLETIME_S 0.003
-      #define PID_SAMPLETIME 3000 
-      #define IMU_SAMPLETIME 3000
+      #define SAMPLETIME 3000 //define loop sample time at a frequency of 3000µs
+      #define SAMPLETIME_S 0.003
     #endif
     
     #define MAX_INTEGRAL 230  //  integral clamping to avoid writing values outside the range of pwm output
@@ -67,7 +65,7 @@
 /* ———————————————————————————————————————————INERTIAL MEASURMENT UNIT CONFIGURATION—————————————————————————————————————————— */
 
 
-    #define GYRO_PART 0.985
+    #define GYRO_PART 0.965
 
     #define FILTER_COMPARISONS 9 //number of sample comparisons for median filter
     

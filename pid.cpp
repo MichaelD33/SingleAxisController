@@ -28,8 +28,8 @@ void initPids(){
     lastTime = currentT;
 
     Kp = (1 + chAuxPot1() + chAuxPot2());
-    Ki = 0 * PID_SAMPLETIME;
-    Kd = 0 / PID_SAMPLETIME;
+    Ki = 0 * SAMPLETIME;
+    Kd = 0 / SAMPLETIME;
 } 
     
 

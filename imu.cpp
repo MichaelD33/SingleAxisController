@@ -159,7 +159,7 @@ void processAcc(){
 
 void imuCombine(){
 
-  angle = 0.965 * (angle + (gyroRate * 0.003)) + 0.035 * accel;
+  angle = GYRO_PART * (angle + (gyroRate * SAMPLETIME_S)) + (1-GYRO_PART) * accel;
 
   #ifdef PRINT_SERIALDATA
     if(chAux2() == 2){
