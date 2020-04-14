@@ -80,7 +80,10 @@ median_filter_t gyro_z_filter = median_filter_new(FILTER_COMPARISONS,0); //decla
    Wire.write(0x1A);  // digital low pass filter register 0x1A
 
    #ifdef DIGITAL_LOW_PASS_FILTER
-     Wire.write(B00000100); // ENABLING LOW PASS FILTRATION
+//   Wire.write(B00000011); // configuring DLPF scalar #3
+   Wire.write(B00000100); // configuring DLPF scalar #4
+//   Wire.write(B00000101); // configuring DLPF scalar #5
+//   Wire.write(B00000110); // configuring DLPF scalar #6
    #else
      Wire.write(B00000000);
    #endif     
@@ -163,18 +166,7 @@ void imuCombine(){
 
   #ifdef PRINT_SERIALDATA
     if(chAux2() == 2){
-     Serial.print("Arming: ");
-     Serial.print(chAux1());
-     Serial.print(", pot 1: ");
-     Serial.print(chAuxPot1());
-     Serial.print(", pot 2: ");
-     Serial.print(chAuxPot2(), 3);
-     Serial.print(", angle: ");
      Serial.print(angle);
-     Serial.print(", acc: ");
-     Serial.print(accel);
-     Serial.print(", gyro: ");
-     Serial.print(gyroRate);
     }
   #endif
    
