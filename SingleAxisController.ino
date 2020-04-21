@@ -9,7 +9,6 @@
  *  Source Code: https://github.com/MichaelD33/AIO-Quadcopter-Flight-Controller
  *  Design Files: https://github.com/MichaelD33/AIO-Quadcopter-Design
 
-    A simple quadcopter flight controller in ~1500 lines of code
 
     This program is part of the AIO Flight Controller.
     

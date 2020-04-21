@@ -1,6 +1,7 @@
 /*
     The PID Controller makes adjustments to the motor speeds in order to adjust orientation in the desired angle/direction
 */
+#include <Arduino.h>
 #include "pid.h"
 #include "config.h"
 

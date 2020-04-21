@@ -7,7 +7,7 @@
 
 /* ——————————————————————————————————————————————————————DEBUGGING————————————————————————————————————————————————————————— */
 
-  #define PRINT_SERIALDATA     // calls the printSerial() function in loop()
+//  #define PRINT_SERIALDATA     // calls the printSerial() function in loop()
   #define LOOP_SAMPLING      // enables loop sampling for fixed PID and IMU sampling rates as well as loop time profiling
 
 /* —————————————————————————————————————————————————AIRCRAFT CONFIGURATION——————————————————————————————————————————————————— */
