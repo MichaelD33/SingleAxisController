@@ -18,7 +18,7 @@
 #include "RX.h"
 
 float angle = 0;
-float accel, TmpRaw, gyroRate, gamma;
+float accel, TmpRaw, gyroRate, gyroAngle, gammaX, gammaY, gammaZ;
 int AcXRaw,AcYRaw,AcZRaw,GyXRaw,GyYRaw,GyZRaw;
 
 axis_float_t gyroOutput;
@@ -80,6 +80,9 @@ median_filter_t gyro_z_filter = median_filter_new(FILTER_COMPARISONS,0); //decla
    Wire.write(0x1A);  // digital low pass filter register 0x1A
 
    #ifdef DIGITAL_LOW_PASS_FILTER
+//   Wire.write(B00000000); // configuring DLPF scalar #0
+//   Wire.write(B00000001); // configuring DLPF scalar #1
+//   Wire.write(B00000010); // configuring DLPF scalar #2
 //   Wire.write(B00000011); // configuring DLPF scalar #3
    Wire.write(B00000100); // configuring DLPF scalar #4
 //   Wire.write(B00000101); // configuring DLPF scalar #5
@@ -129,10 +132,30 @@ void processGyro(){
   gyroOutput.y = ((gyroFiltered.y - GYRO_Y_OFFSET) / GYRO_SENS);
   gyroOutput.z = ((gyroFiltered.z - GYRO_Z_OFFSET) / GYRO_SENS);
 
-  //gamma = sqrt(sq(gyroOutput.x) + sq(gyroOutput.y) + sq(gyroOutput.z));
+/*
+ 
+//  gamma = (  gyroOutput.x / sqrt(2) + gyroOutput.y / sqrt(2) );
+//  gyroRate = atan2(gamma, gyroOutput.z) * 180 / M_PI;
 
-  gyroRate = (  gyroOutput.x / sqrt(2) + gyroOutput.y / sqrt(2) );
+*/
+
+  gammaX += (gyroOutput.x * SAMPLETIME_S);
+  gammaY += (gyroOutput.y * SAMPLETIME_S);
+  gammaZ += (gyroOutput.z * SAMPLETIME_S);
   
+  gyroAngle = (  gammaY / sqrt(2) - gammaX / sqrt(2) );
+
+
+  Serial.print(gammaX);
+  Serial.print(", ");
+  Serial.print(gammaY);
+  Serial.print(", ");
+  Serial.print(gammaZ);
+  Serial.print(", ");
+  Serial.print( gyroAngle );
+  Serial.print(", ");
+ 
+
   processAcc();
   imuCombine();
 
@@ -156,17 +179,29 @@ void processAcc(){
 //    float beta = sqrt(sq(accel_filtered.x) + sq(accel_filtered.y) + sq(accel_filtered.z));
 //    accel = (acos(accel_filtered.z / beta) * 180 / M_PI);
      
+
+      Serial.print(accel_filtered.x);
+      Serial.print(", ");
+      Serial.print(accel_filtered.y);
+      Serial.print(", ");
+      Serial.print(accel_filtered.z);
+      Serial.print(", ");
+     
      float beta = (  accel_filtered.x / sqrt(2) + accel_filtered.y / sqrt(2) );
      accel = atan2(beta, accel_filtered.z) * 180 / M_PI;
+
+      Serial.print(accel);
 }
 
 void imuCombine(){
 
   angle = GYRO_PART * (angle + (gyroRate * SAMPLETIME_S)) + (1-GYRO_PART) * accel;
-
+  
   #ifdef PRINT_SERIALDATA
     if(chAux2() == 2){
-     Serial.print(angle);
+//     Serial.print(accel_filtered.x);
+//     Serial.print(", ");
+//     Serial.print(gamma);
     }
   #endif
    
