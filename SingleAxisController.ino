@@ -1,14 +1,13 @@
 /*
- *  The AIO Flight Controller - An integrated quadcopter flight controller program for the Arduino platform.
+ *  This is a testing program designed for the single axis version of the AIO quadcopter. 
+ *  The purpose of this program is to test basic aspects of the quadcopter's design in order to analyze its behavior.
  *  
- *  Copyright © 2018-2019 Michael Delaney. All rights reserved.
+ *  Copyright © 2018-2020 Michael Delaney. All rights reserved.
  * 
  *  This program takes orientation data from an inertial measurement unit in addition to input from an external remote 
  *  in order to adjust its position by varying the speed of its motors according to calculations made by the control loop.
  * 
- *  Source Code: https://github.com/MichaelD33/AIO-Quadcopter-Flight-Controller
- *  Design Files: https://github.com/MichaelD33/AIO-Quadcopter-Design
-
+ *  Source Code: https://github.com/MichaelD33/SingleAxisController
 
     This program is part of the AIO Flight Controller.
     
