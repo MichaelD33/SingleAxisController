@@ -28,9 +28,9 @@ void initPids(){
     lastAngle = currentAngle;
     lastTime = currentT;
 
-    Kp = (1 + chAuxPot1() + chAuxPot2());
-    Ki = 0 * SAMPLETIME;
-    Kd = 0 / SAMPLETIME;
+    Kp = (0.7);
+    Ki = (0 + (2*chAuxPot1()) + (4*chAuxPot2())) * SAMPLETIME_S;
+    Kd = 0 / SAMPLETIME_S;
 } 
     
 
@@ -94,19 +94,14 @@ void computePids(){
     motorSpeed.four = motorSpeed_raw.four;
 
     if(chAux2() == 0){
-      Serial.print(chAux1());
-      Serial.print(",");
-      Serial.print(chAuxPot1());
-      Serial.print(",");
-      Serial.print(chAuxPot2(), 3);
-      Serial.print(",");
+      Serial.print("Kp: ");
       Serial.print(Kp);
-      Serial.print(",");
+      Serial.print(", Ki: ");
+      Serial.print(Ki, 4);
+      Serial.print(", out: ");
       Serial.print(output);
-      Serial.print(",");
-      Serial.print(motorSpeed.two);
-      Serial.print(",");
-      Serial.print(motorSpeed.four);
+      Serial.print(", IMU: ");      
+      Serial.println(imu_angle());
     }
            
 }

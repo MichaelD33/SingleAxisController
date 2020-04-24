@@ -118,7 +118,7 @@ void loop() {
       #ifdef PRINT_SERIALDATA
         if(chAux2() == 1){
           Serial.print(",\t PID: ");
-          Serial.print(indexTime - pidEndTime);
+          Serial.println(indexTime - pidEndTime);
         }
       #endif
       
@@ -158,11 +158,6 @@ void loop() {
 
 
   lastArmState = armState;
-  
-  #ifdef PRINT_SERIALDATA
-    printSerial(); // used for GUI application and debugging
-    Serial.println("");
-  #endif
 
 }
 
@@ -177,23 +172,4 @@ int armingState(){
 
 int lastArmingState(){
   return lastArmState;
-}
-  
-void printSerial(){
-
-/*
-
-  switch(chAux2()){
-    
-    case 0: break;
-
-    case 1: break;
-
-    case 2: break;
-
-    default: break;
-    
-  }
-*/
-    
 }
