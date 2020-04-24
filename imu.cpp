@@ -19,18 +19,9 @@
 
 #include "I2Cdev.h"
 #include "MPU6050_6Axis_MotionApps20.h"
+#include "helper_3dmath.h"
 
 MPU6050 mpu;
-
-//#define OUTPUT_READABLE_QUATERNION
-
-// Note that Euler angles suffer from gimbal lock (for more info, see
-// http://en.wikipedia.org/wiki/Gimbal_lock)
-//#define OUTPUT_READABLE_EULER
-
-// Also note that yaw/pitch/roll angles suffer from gimbal lock (for
-// more info, see: http://en.wikipedia.org/wiki/Gimbal_lock)
-#define OUTPUT_READABLE_YAWPITCHROLL
 
 #define INTERRUPT_PIN 2  // use pin 2 on Arduino Uno & most boards
 
@@ -124,16 +115,13 @@ void readIMU(){
   
       // wait for MPU interrupt or extra packet(s) available
       while (!mpuInterrupt && fifoCount < packetSize) {
+          
           // other program behavior stuff here
-          // .
-          // .
-          // .
+
           // if you are really paranoid you can frequently test in between other
           // stuff to see if mpuInterrupt is true, and if so, "break;" from the
           // while() loop to immediately process the MPU data
-          // .
-          // .
-          // .
+
       }
   
       // reset interrupt flag and get INT_STATUS byte
@@ -160,53 +148,29 @@ void readIMU(){
           // track FIFO count here in case there is > 1 packet available
           // (this lets us immediately read more without waiting for an interrupt)
           fifoCount -= packetSize;
-  
-          #ifdef OUTPUT_READABLE_QUATERNION
-              // display quaternion values in easy matrix form: w x y z
-              mpu.dmpGetQuaternion(&q, fifoBuffer);
-              Serial.print("quat\t");
-              Serial.print(q.w);
-              Serial.print("\t");
-              Serial.print(q.x);
-              Serial.print("\t");
-              Serial.print(q.y);
-              Serial.print("\t");
-              Serial.println(q.z);
+
+          mpu.dmpGetQuaternion(&q, fifoBuffer);
+          Quaternion p(sin(M_PI/8), 0, 0, cos(M_PI/8));
+
+          // quaternion multiplication: q * p, stored back in p
+          p = q.getProduct(p);
+      
+          // quaternion multiplication: p * conj(q), stored back in p
+          p.getProduct(q.getConjugate());
+          
+          mpu.dmpGetGravity(&gravity, &p);
+          mpu.dmpGetYawPitchRoll(ypr, &p, &gravity);
+          
+          #ifdef PRINT_SERIALDATA
+            if(chAux2() == 2){ 
+              Serial.println(ypr[2] * 180/M_PI);
+            }
           #endif
-  
-          #ifdef OUTPUT_READABLE_EULER
-              // display Euler angles in degrees
-              mpu.dmpGetQuaternion(&q, fifoBuffer);
-              mpu.dmpGetEuler(euler, &q);
-              Serial.print("euler\t");
-              Serial.print(euler[0] * 180/M_PI);
-              Serial.print("\t");
-              Serial.print(euler[1] * 180/M_PI);
-              Serial.print("\t");
-              Serial.println(euler[2] * 180/M_PI);
-          #endif
-  
-          #ifdef OUTPUT_READABLE_YAWPITCHROLL
-              // display Euler angles in degrees
-              mpu.dmpGetQuaternion(&q, fifoBuffer);
-              mpu.dmpGetGravity(&gravity, &q);
-              mpu.dmpGetYawPitchRoll(ypr, &q, &gravity);
-            /*
-              Serial.print("ypr\t");
-              Serial.print(ypr[0] * 180/M_PI);
-              Serial.print("\t");
-              Serial.print(ypr[1] * 180/M_PI);
-              Serial.print("\t");
-              Serial.print(ypr[2] * 180/M_PI);
-            */ 
-              angle = ((ypr[1]* 180/M_PI)/sqrt(2) + (ypr[2]* 180/M_PI)/sqrt(2));
-              //Serial.print("\t");
-              Serial.println(angle);
-              
-          #endif
+          
       }
    
 }
+
 
 float imu_angle(){
   return angle;
