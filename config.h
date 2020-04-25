@@ -46,8 +46,8 @@
 /* ———————————————————————————————————————————————PID CONTROLLER CONFIGURATION———————————————————————————————————————————————— */
 
     #ifdef LOOP_SAMPLING
-      #define SAMPLETIME 3000 //define loop sample time at a frequency of 3000µs
-      #define SAMPLETIME_S 0.003
+      #define SAMPLETIME 10000 //define loop sample time at a frequency of 10000µs (10 milliseconds)
+      #define SAMPLETIME_S 0.01
     #endif
     
     #define MAX_INTEGRAL 230  //  integral clamping to avoid writing values outside the range of pwm output

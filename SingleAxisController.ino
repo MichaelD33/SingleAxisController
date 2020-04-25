@@ -1,15 +1,13 @@
 /*
- *  The AIO Flight Controller - An integrated quadcopter flight controller program for the Arduino platform.
+ *  This is a testing program designed for the single axis version of the AIO quadcopter. 
+ *  The purpose of this program is to test basic aspects of the quadcopter's design in order to analyze its behavior.
  *  
- *  Copyright © 2018-2019 Michael Delaney. All rights reserved.
+ *  Copyright © 2018-2020 Michael Delaney. All rights reserved.
  * 
  *  This program takes orientation data from an inertial measurement unit in addition to input from an external remote 
  *  in order to adjust its position by varying the speed of its motors according to calculations made by the control loop.
  * 
- *  Source Code: https://github.com/MichaelD33/AIO-Quadcopter-Flight-Controller
- *  Design Files: https://github.com/MichaelD33/AIO-Quadcopter-Design
-
-    A simple quadcopter flight controller in ~1500 lines of code
+ *  Source Code: https://github.com/MichaelD33/SingleAxisController
 
     This program is part of the AIO Flight Controller.
     
@@ -120,7 +118,7 @@ void loop() {
       #ifdef PRINT_SERIALDATA
         if(chAux2() == 1){
           Serial.print(",\t PID: ");
-          Serial.print(indexTime - pidEndTime);
+          Serial.println(indexTime - pidEndTime);
         }
       #endif
       
@@ -160,11 +158,6 @@ void loop() {
 
 
   lastArmState = armState;
-  
-  #ifdef PRINT_SERIALDATA
-    printSerial(); // used for GUI application and debugging
-    Serial.println("");
-  #endif
 
 }
 
@@ -179,23 +172,4 @@ int armingState(){
 
 int lastArmingState(){
   return lastArmState;
-}
-  
-void printSerial(){
-
-/*
-
-  switch(chAux2()){
-    
-    case 0: break;
-
-    case 1: break;
-
-    case 2: break;
-
-    default: break;
-    
-  }
-*/
-    
 }
