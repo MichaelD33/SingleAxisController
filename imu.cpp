@@ -17,9 +17,9 @@
 #include "imu.h"
 #include "RX.h"
 
-#include "I2Cdev.h"
-#include "MPU6050_6Axis_MotionApps20.h"
-#include "helper_3dmath.h"
+#include "src/I2Cdev.h"
+#include "src/MPU6050_6Axis_MotionApps20.h"
+#include "src/helper_3dmath.h"
 
 MPU6050 mpu;
 
@@ -58,53 +58,53 @@ void dmpDataReady() {
    Wire.setClock(400000); // 400kHz I2C clock. Comment this line if microcontroller does not support 400kHz
    
    Serial.println(F("Initializing I2C devices..."));
-    mpu.initialize();
-    pinMode(INTERRUPT_PIN, INPUT);
+   mpu.initialize();
+   pinMode(INTERRUPT_PIN, INPUT);
 
-    // verify connection
-    Serial.println(F("Testing device connections..."));
-    Serial.println(mpu.testConnection() ? F("MPU6050 connection successful") : F("MPU6050 connection failed"));
+   // verify connection
+   Serial.println(F("Testing device connections..."));
+   Serial.println(mpu.testConnection() ? F("MPU6050 connection successful") : F("MPU6050 connection failed"));
 
-    // wait for ready
-    Serial.println(F("\nSend any character to begin DMP programming and demo: "));
-    while (Serial.available() && Serial.read()); // empty buffer
-    while (!Serial.available());                 // wait for data
-    while (Serial.available() && Serial.read()); // empty buffer again
+   // wait for ready
+   Serial.println(F("\nSend any character to begin DMP programming and demo: "));
+   while (Serial.available() && Serial.read()); // empty buffer
+   while (!Serial.available());                 // wait for data
+   while (Serial.available() && Serial.read()); // empty buffer again
 
-    // configure the DMP
-    Serial.println(F("Initializing DMP..."));
-    devStatus = mpu.dmpInitialize();
+   // configure the DMP
+   Serial.println(F("Initializing DMP..."));
+   devStatus = mpu.dmpInitialize();
 
-    // supply your own gyro offsets here, scaled for min sensitivity
-    mpu.setXGyroOffset(GYRO_X_OFFSET);
-    mpu.setYGyroOffset(GYRO_Y_OFFSET);
-    mpu.setZGyroOffset(GYRO_Z_OFFSET);
-    mpu.setZAccelOffset(ACCEL_Z_OFFSET);
+   // supply your own gyro offsets here, scaled for min sensitivity
+   mpu.setXGyroOffset(GYRO_X_OFFSET);
+   mpu.setYGyroOffset(GYRO_Y_OFFSET);
+   mpu.setZGyroOffset(GYRO_Z_OFFSET);
+   mpu.setZAccelOffset(ACCEL_Z_OFFSET);
 
-    if (devStatus == 0) {
-        // turn on the DMP, now that it's ready
-        Serial.println(F("Enabling DMP..."));
-        mpu.setDMPEnabled(true);
+   if (devStatus == 0) {
+       // turn on the DMP, now that it's ready
+       Serial.println(F("Enabling DMP..."));
+       mpu.setDMPEnabled(true);
 
-        // enable Arduino interrupt detection
-        Serial.println(F("Enabling interrupt detection (Arduino external interrupt 0)..."));
-        attachInterrupt(digitalPinToInterrupt(INTERRUPT_PIN), dmpDataReady, RISING);
-        mpuIntStatus = mpu.getIntStatus();
+       // enable Arduino interrupt detection
+       Serial.println(F("Enabling interrupt detection (Arduino external interrupt 0)..."));
+       attachInterrupt(digitalPinToInterrupt(INTERRUPT_PIN), dmpDataReady, RISING);
+       mpuIntStatus = mpu.getIntStatus();
 
-        // set our DMP Ready flag so the main loop() function knows it's okay to use it
-        Serial.println(F("DMP ready! Waiting for first interrupt..."));
-        dmpReady = true;
+       // set our DMP Ready flag so the main loop() function knows it's okay to use it
+       Serial.println(F("DMP ready! Waiting for first interrupt..."));
+       dmpReady = true;
 
         // get expected DMP packet size for later comparison
-        packetSize = mpu.dmpGetFIFOPacketSize();
-    } else {
-        // ERROR!
-        // 1 = initial memory load failed
-        // 2 = DMP configuration updates failed
-        // (if it's going to break, usually the code will be 1)
-        Serial.print(F("DMP Initialization failed (code "));
-        Serial.print(devStatus);
-        Serial.println(F(")"));
+       packetSize = mpu.dmpGetFIFOPacketSize();
+   } else {
+       // ERROR!
+       // 1 = initial memory load failed
+       // 2 = DMP configuration updates failed
+       // (if it's going to break, usually the code will be 1)
+       Serial.print(F("DMP Initialization failed (code "));
+       Serial.print(devStatus);
+       Serial.println(F(")"));
     }
 
 }
@@ -166,6 +166,8 @@ void readIMU(){
               Serial.println(ypr[2] * 180/M_PI);
             }
           #endif
+
+          angle = 0 - (ypr[2] * 180/M_PI);
           
       }
    
