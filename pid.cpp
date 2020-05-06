@@ -5,11 +5,8 @@
 #include "pid.h"
 #include "config.h"
 
-
-unsigned long lastTime, currentT;
-
-float Kp = 0;
-float Ki = 0;
+float Kp = 0.7;
+float Ki = 0.015;
 float Kd = 0;
 
 int desiredAngle;
@@ -26,29 +23,28 @@ void initPids(){
     computePids();
     resetPids();
     lastAngle = currentAngle;
-    lastTime = currentT;
 
-    Kp = (0.7);
-    Ki = (0 + (2*chAuxPot1()) + (4*chAuxPot2())) * SAMPLETIME_S;
-    Kd = 0 / SAMPLETIME_S;
+//    Kp = (0.7);
+//    Ki = (0 + (2*chAuxPot1()) + (4*chAuxPot2())) * SAMPLETIME_S;
+    Kd = (0 + (chAuxPot1()/5) + (chAuxPot2()/4)) / SAMPLETIME_S;
 } 
     
 
 void computePids(){
-    
-    currentAngle = imu_angle(); //read angle from IMU and set it to the current angle
-   
-    // error = (-1 * chRoll())  - currentAngle ;
-    error = 0 - currentAngle;
-    
-//      errorSum += error;
+
+    // read angle from IMU and set it to the current angle
+    currentAngle = imu_angle(); 
+
+    // determine the difference between the position and setpoint
+    error = (-1 * chPitch()) - currentAngle;
+
+    // determine the change in difference over time (derivative)
     deltaError = (currentAngle - lastAngle);
     
-    //compute integral
-//    float integral = Ki * errorSum;
+    // compute the accumulation of error over time (integral)
     integral += Ki * error;
     
-    //clamp the range of integral values
+    // clamp the range of integral values
     if(integral > MAX_INTEGRAL){ 
       integral = MAX_INTEGRAL; 
     }else if (integral < (0 - MAX_INTEGRAL)){
@@ -59,13 +55,14 @@ void computePids(){
  
   
     //write outputs to corresponding motors at the corresponding speed
+// ——————————————————————————————————————————————————————————————————————— //    
      //motorSpeed.one = abs(chThrottle() + outputX - outputY - outputZ); 
      motorSpeed_raw.two = chThrottle() - output; 
      //motorSpeed.three = abs(chThrottle() - outputX + outputY - outputZ);
      motorSpeed_raw.four = chThrottle() + output;
      
      //clamp the min and max output from the pid controller (to match the needed 0-255 for pwm)
-
+// ——————————————————————————————————————————————————————————————————————————————————————————————— //
 //     if(motorSpeed.one > ESC_MAX){
 //        motorSpeed.one = ESC_MAX;  
 //       }else if (motorSpeed.one < ESC_MIN){
@@ -94,14 +91,15 @@ void computePids(){
     motorSpeed.four = motorSpeed_raw.four;
 
     if(chAux2() == 0){
-      Serial.print("Kp: ");
+      Serial.print("IMU: ");      
+      Serial.print(imu_angle());
+      Serial.print(", Kp: ");
       Serial.print(Kp);
       Serial.print(", Ki: ");
       Serial.print(Ki, 4);
-      Serial.print(", out: ");
-      Serial.print(output);
-      Serial.print(", IMU: ");      
-      Serial.println(imu_angle());
+      Serial.print(", Kd: ");
+      Serial.println(Kd);
+
     }
            
 }
@@ -112,7 +110,8 @@ void resetPids(){
       errorSum = 0;
       
     }else if(armingState() != lastArmingState()){
-    //reset the integral term when the quadcopter is armed
+      
+      //reset the integral term when the quadcopter is armed
       errorSum = 0;
     
   }
