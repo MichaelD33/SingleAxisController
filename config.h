@@ -41,7 +41,7 @@
     #define FAILSAFE 4                  //  TBD
 
 //  SET QUADCOPTER ROATATIONAL RATE
-    #define RC_RATES 180 // Maximum rotation speed: 180 degrees per second
+    #define RC_RATES 90 // Maximum rotation speed: 180 degrees per second
 
 /* ———————————————————————————————————————————————PID CONTROLLER CONFIGURATION———————————————————————————————————————————————— */
 
