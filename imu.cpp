@@ -41,7 +41,8 @@ float euler[3];         // [psi, theta, phi]    Euler angle container
 float ypr[3];           // [yaw, pitch, roll]   yaw/pitch/roll container and gravity vector
 
 float angle;
-
+float virtualRate, virtualRate2, rate2Angle;
+int rateArray[3];
 
 // ================================================================
 // ===               INTERRUPT DETECTION ROUTINE                ===
@@ -149,7 +150,13 @@ void readIMU(){
           // (this lets us immediately read more without waiting for an interrupt)
           fifoCount -= packetSize;
 
+
+    /*  —————————————————————————————————— IMU ANGLE OUTPUT——————————————————————————————————  */
+    
           mpu.dmpGetQuaternion(&q, fifoBuffer);
+
+    /* APPLYING VIRTUAL ROTATION TO QUATERNION DATA */
+          
           Quaternion p(sin(M_PI/8), 0, 0, cos(M_PI/8));
 
           // quaternion multiplication: q * p, stored back in p
@@ -157,22 +164,51 @@ void readIMU(){
       
           // quaternion multiplication: p * conj(q), stored back in p
           p.getProduct(q.getConjugate());
-          
+
+     /* CONVERT QUATERNION TO YPR ANGLES */
+
           mpu.dmpGetGravity(&gravity, &p);
           mpu.dmpGetYawPitchRoll(ypr, &p, &gravity);
           
-          #ifdef PRINT_SERIALDATA
-            if(chAux2() == 2){ 
-              Serial.println(ypr[2] * 180/M_PI);
-            }
-          #endif
+
 
           angle = 0 - (ypr[2] * 180/M_PI);
+
+      /*  —————————————————————————————————— IMU RATE OUTPUT  ——————————————————————————————————  */
+
+          mpu.dmpGetGyro(rateArray, fifoBuffer);
+          
+
+          virtualRate = (rateArray[0]/sqrt(2) - rateArray[1]/sqrt(2));
+         // rate2Angle += virtualRate * SAMPLETIME_S;
+          virtualRate2 = (rateArray[0]/sqrt(2) + rateArray[1]/sqrt(2));
+
+          #ifdef PRINT_SERIALDATA
+            if(chAux2() == 2){ 
+ //             Serial.print("a: ");
+ //             Serial.print(ypr[2] * 180/M_PI);
+              Serial.print("RaY:");
+              Serial.print(rateArray[0]);
+              Serial.print(",RaX:");
+              Serial.print(rateArray[1]);
+              Serial.print(",vR:");
+              Serial.print(virtualRate);
+              Serial.print(",vR2:");
+              Serial.println(virtualRate2);
+ //             Serial.print(", r2a: ");
+ //             Serial.println(rate2Angle);
+              
+          }
+          #endif
+
           
       }
    
 }
 
+float imu_rate(){
+  return virtualRate;
+}
 
 float imu_angle(){
   return angle;
