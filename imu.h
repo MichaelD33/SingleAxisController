@@ -8,5 +8,6 @@ void initIMU();
 void readIMU();
 
 float imu_angle();
+float imu_rate();
 
 #endif

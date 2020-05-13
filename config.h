@@ -40,14 +40,14 @@
     #define BEEP 3                      //  TBD
     #define FAILSAFE 4                  //  TBD
 
-//  SET QUADCOPTER ROATATIONAL RATE
-    #define RC_RATES 90 // Maximum rotation speed: 180 degrees per second
+//  SET QUADCOPTER ROTATIONAL RATE
+    #define RC_RATES 400 // Maximum rotation speed: 400 (this is a dimensionless parameter)
 
 /* ———————————————————————————————————————————————PID CONTROLLER CONFIGURATION———————————————————————————————————————————————— */
 
     #ifdef LOOP_SAMPLING
-      #define SAMPLETIME 10000 //define loop sample time at a frequency of 10000µs (10 milliseconds)
-      #define SAMPLETIME_S 0.01
+      #define SAMPLETIME 5000 //define loop sample time at a frequency of 5000µs (5 milliseconds)
+      #define SAMPLETIME_S 0.005
     #endif
     
     #define MAX_INTEGRAL 230  //  integral clamping to avoid writing values outside the range of pwm output
