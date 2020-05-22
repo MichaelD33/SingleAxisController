@@ -2,6 +2,10 @@
 ---
 This program is based on the AIO Flight Controller. This is a *testing* program, it is not a fully functional flight controller. This program is designed to work with the [AIO quadcopter version 0.4.1](https://github.com/MichaelD33/AIO-Quadcopter-Design/tree/master/circuitry/version%200.4.1), mounted in the [single axis testing jig](https://github.com/MichaelD33/AIO-Quadcopter-Design/tree/master/test%20jig/single%20axis%20test%20jig).
 
+__Disclaimer:__ This is a functional *yet unfinished* project. The information in this repository is provided without warranty or guaranteed funtionality. If you attempt to replicate this project, I am not responsible for any damages or failures associated with your work.
+
+
+
 Single Axis Test Setup: 
 ![Image of the single axis test jig](https://i2.wp.com/delaney.nyc/wp-content/uploads/2020/04/IMG_4906-scaled.jpeg)
 
